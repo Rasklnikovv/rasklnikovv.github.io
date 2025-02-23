@@ -168,6 +168,115 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/23/%E4%B8%A4%E7%A7%8D%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E7%9A%84%E6%B7%B7%E5%90%88%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="超限爆闪">
+      <meta itemprop="description" content="天道酬勤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="日进一知">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/23/%E4%B8%A4%E7%A7%8D%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E7%9A%84%E6%B7%B7%E5%90%88%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">两种推荐算法的混合实现</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-23 19:17:07 / 修改时间：19:20:45" itemprop="dateCreated datePublished" datetime="2025-02-23T19:17:07+08:00">2025-02-23</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>为了开发基于Django的个性化旅游景点推荐系统，结合协同过滤和基于内容的推荐，以下是详细的实现步骤和建议：</p>
+<hr>
+<h3 id="一、系统设计"><a href="#一、系统设计" class="headerlink" title="一、系统设计"></a><strong>一、系统设计</strong></h3><h4 id="1-数据库模型"><a href="#1-数据库模型" class="headerlink" title="1. 数据库模型"></a>1. 数据库模型</h4><ul>
+<li><p><strong>用户行为模型</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Like</span>(models.Model):</span><br><span class="line">    user = models.ForeignKey(User, on_delete=models.CASCADE)</span><br><span class="line">    attraction = models.ForeignKey(<span class="string">&#x27;Attraction&#x27;</span>, on_delete=models.CASCADE)</span><br><span class="line">    timestamp = models.DateTimeField(auto_now_add=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Favorite</span>(models.Model):</span><br><span class="line">    user = models.ForeignKey(User, on_delete=models.CASCADE)</span><br><span class="line">    attraction = models.ForeignKey(<span class="string">&#x27;Attraction&#x27;</span>, on_delete=models.CASCADE)</span><br><span class="line">    timestamp = models.DateTimeField(auto_now_add=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Comment</span>(models.Model):</span><br><span class="line">    user = models.ForeignKey(User, on_delete=models.CASCADE)</span><br><span class="line">    attraction = models.ForeignKey(<span class="string">&#x27;Attraction&#x27;</span>, on_delete=models.CASCADE)</span><br><span class="line">    text = models.TextField()</span><br><span class="line">    sentiment = models.FloatField()  <span class="comment"># 可选：通过NLP预处理情感分数</span></span><br><span class="line">    timestamp = models.DateTimeField(auto_now_add=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>景点模型</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Attraction</span>(models.Model):</span><br><span class="line">    name = models.CharField(max_length=<span class="number">255</span>)</span><br><span class="line">    description = models.TextField()</span><br><span class="line">    category = models.ForeignKey(<span class="string">&#x27;Category&#x27;</span>, on_delete=models.CASCADE)</span><br><span class="line">    tags = models.JSONField()  <span class="comment"># 存储标签列表，如[&quot;自然风光&quot;, &quot;历史遗迹&quot;]</span></span><br><span class="line">    location = models.PointField()  <span class="comment"># 地理位置，用于地理推荐（可选）</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="二、协同过滤推荐实现"><a href="#二、协同过滤推荐实现" class="headerlink" title="二、协同过滤推荐实现"></a><strong>二、协同过滤推荐实现</strong></h3><h4 id="1-数据预处理"><a href="#1-数据预处理" class="headerlink" title="1. 数据预处理"></a>1. 数据预处理</h4><ul>
+<li>构建用户-景点矩阵（稀疏矩阵更高效）：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用户行为统计：统计每个用户点赞/收藏的景点</span></span><br><span class="line">user_attraction_matrix = defaultdict(<span class="keyword">lambda</span>: defaultdict(<span class="built_in">int</span>))</span><br><span class="line"><span class="keyword">for</span> like <span class="keyword">in</span> Like.objects.<span class="built_in">all</span>():</span><br><span class="line">    user_attraction_matrix[like.user.<span class="built_in">id</span>][like.attraction.<span class="built_in">id</span>] += <span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> fav <span class="keyword">in</span> Favorite.objects.<span class="built_in">all</span>():</span><br><span class="line">    user_attraction_matrix[fav.user.<span class="built_in">id</span>][fav.attraction.<span class="built_in">id</span>] += <span class="number">2</span>  <span class="comment"># 收藏权重更高</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-相似度计算"><a href="#2-相似度计算" class="headerlink" title="2. 相似度计算"></a>2. 相似度计算</h4><ul>
+<li>使用余弦相似度或基于共同物品的数量：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics.pairwise <span class="keyword">import</span> cosine_similarity</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为稀疏矩阵格式（例如使用scipy的csr_matrix）</span></span><br><span class="line"><span class="comment"># 然后计算用户相似度矩阵：</span></span><br><span class="line">user_similarity = cosine_similarity(user_item_matrix)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="3-推荐算法"><a href="#3-推荐算法" class="headerlink" title="3. 推荐算法"></a>3. 推荐算法</h4><ul>
+<li><strong>基于用户的协同过滤</strong>：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_top_n_similar_users</span>(<span class="params">user_id, n=<span class="number">5</span></span>):</span><br><span class="line">    <span class="comment"># 找到与user_id最相似的n个用户</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sorted</span>(<span class="built_in">enumerate</span>(user_similarity[user_id]), key=<span class="keyword">lambda</span> x: -x[<span class="number">1</span>])[<span class="number">0</span>:n]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">collaborative_filtering</span>(<span class="params">user_id, n=<span class="number">10</span></span>):</span><br><span class="line">    similar_users = get_top_n_similar_users(user_id)</span><br><span class="line">    recommendations = defaultdict(<span class="built_in">int</span>)</span><br><span class="line">    <span class="keyword">for</span> idx, sim <span class="keyword">in</span> similar_users:</span><br><span class="line">        <span class="keyword">if</span> idx == user_id:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">for</span> attraction, rating <span class="keyword">in</span> user_attraction_matrix[idx].items():</span><br><span class="line">            recommendations[attraction] += rating * sim</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sorted</span>(recommendations.items(), key=<span class="keyword">lambda</span> x: -x[<span class="number">1</span>])[:n]</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="三、基于内容的推荐实现"><a href="#三、基于内容的推荐实现" class="headerlink" title="三、基于内容的推荐实现"></a><strong>三、基于内容的推荐实现</strong></h3><h4 id="1-特征提取"><a href="#1-特征提取" class="headerlink" title="1. 特征提取"></a>1. 特征提取</h4><ul>
+<li>使用TF-IDF向量化景点描述：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> TfidfVectorizer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预处理景点描述</span></span><br><span class="line">tfidf_vectorizer = TfidfVectorizer(stop_words=<span class="string">&#x27;english&#x27;</span>)</span><br><span class="line">tfidf_matrix = tfidf_vectorizer.fit_transform(attraction_descriptions)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户查询向量化（例如用户输入的搜索词）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_content_similarity</span>(<span class="params">query</span>):</span><br><span class="line">    query_vector = tfidf_vectorizer.transform([query])</span><br><span class="line">    <span class="keyword">return</span> cosine_similarity(query_vector, tfidf_matrix).flatten()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-内容匹配"><a href="#2-内容匹配" class="headerlink" title="2. 内容匹配"></a>2. 内容匹配</h4><ul>
+<li>根据用户查询或历史行为提取兴趣关键词：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">content_based_recommendation</span>(<span class="params">user_id, query=<span class="literal">None</span>, n=<span class="number">10</span></span>):</span><br><span class="line">    <span class="keyword">if</span> query:</span><br><span class="line">        scores = get_content_similarity(query)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># 可选：根据用户收藏/点赞的景点提取关键词</span></span><br><span class="line">        user_attractions = user_attraction_matrix[user_id]</span><br><span class="line">        keywords = <span class="string">&#x27; &#x27;</span>.join(attraction.description <span class="keyword">for</span> attraction, _ <span class="keyword">in</span> user_attractions.items())</span><br><span class="line">        scores = get_content_similarity(keywords)</span><br><span class="line">    <span class="comment"># 获取Top N景点</span></span><br><span class="line">    attraction_indices = np.argsort(scores)[::-<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">return</span> [attraction_ids[i] <span class="keyword">for</span> i <span class="keyword">in</span> attraction_indices[:n]]</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="四、混合推荐策略"><a href="#四、混合推荐策略" class="headerlink" title="四、混合推荐策略"></a><strong>四、混合推荐策略</strong></h3><h4 id="1-权重融合"><a href="#1-权重融合" class="headerlink" title="1. 权重融合"></a>1. 权重融合</h4><ul>
+<li>结合协同过滤和内容推荐的得分：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">hybrid_recommendation</span>(<span class="params">user_id, query=<span class="literal">None</span>, alpha=<span class="number">0.6</span></span>):</span><br><span class="line">    cf Recommendations = collaborative_filtering(user_id, n=<span class="number">20</span>)</span><br><span class="line">    content Recommendations = content_based_recommendation(user_id, query=query, n=<span class="number">20</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 统计综合得分（简化示例）</span></span><br><span class="line">    score_dict = defaultdict(<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">for</span> attraction, cf_score <span class="keyword">in</span> cf_recommendations:</span><br><span class="line">        score_dict[attraction] += alpha * cf_score</span><br><span class="line">    <span class="keyword">for</span> attraction, cb_score <span class="keyword">in</span> content_recommendations:</span><br><span class="line">        score_dict[attraction] += (<span class="number">1</span> - alpha) * cb_score</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sorted</span>(score_dict.items(), key=<span class="keyword">lambda</span> x: -x[<span class="number">1</span>])[:<span class="number">10</span>]</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-冷启动处理"><a href="#2-冷启动处理" class="headerlink" title="2. 冷启动处理"></a>2. 冷启动处理</h4><ul>
+<li>新用户使用基于内容的推荐，用户无行为时返回热门景点。</li>
+</ul>
+<hr>
+<h3 id="五、Django集成"><a href="#五、Django集成" class="headerlink" title="五、Django集成"></a><strong>五、Django集成</strong></h3><h4 id="1-API视图"><a href="#1-API视图" class="headerlink" title="1. API视图"></a>1. API视图</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RecommendationAPIView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self, request, user_id</span>):</span><br><span class="line">        query = request.query_params.get(<span class="string">&#x27;query&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">        recommendations = hybrid_recommendation(user_id, query)</span><br><span class="line">        <span class="keyword">return</span> Response(&#123;<span class="string">&#x27;recommendations&#x27;</span>: recommendations&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-缓存优化"><a href="#2-缓存优化" class="headerlink" title="2. 缓存优化"></a>2. 缓存优化</h4><ul>
+<li>使用Redis缓存推荐结果：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.core.cache <span class="keyword">import</span> cache</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hybrid_recommendation_cached</span>(<span class="params">user_id, query=<span class="literal">None</span></span>):</span><br><span class="line">    key = <span class="string">f&#x27;recommendations_<span class="subst">&#123;user_id&#125;</span>_<span class="subst">&#123;query&#125;</span>&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> key <span class="keyword">in</span> cache:</span><br><span class="line">        <span class="keyword">return</span> cache[key]</span><br><span class="line">    result = hybrid_recommendation(user_id, query)</span><br><span class="line">    cache.<span class="built_in">set</span>(key, result, timeout=<span class="number">3600</span>)</span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="六、进阶优化"><a href="#六、进阶优化" class="headerlink" title="六、进阶优化"></a><strong>六、进阶优化</strong></h3><ol>
+<li><strong>实时行为更新</strong>：使用WebSocket或消息队列（如RabbitMQ）实时更新用户行为。</li>
+<li><strong>地理推荐</strong>：集成地理位置API（如Google Maps）计算景点间的距离相似度。</li>
+<li><strong>模型部署</strong>：使用LightFM或TensorFlow Lite训练混合模型，提升响应速度。</li>
+</ol>
+<hr>
+<h3 id="七、工具链推荐"><a href="#七、工具链推荐" class="headerlink" title="七、工具链推荐"></a><strong>七、工具链推荐</strong></h3><ul>
+<li><strong>NLP库</strong>：spaCy（中文分词）、BERTopic（主题建模）</li>
+<li><strong>推荐算法</strong>：LightFM（支持混合模型）</li>
+<li><strong>部署</strong>：Docker + Gunicorn + Nginx</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/23/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%93%E4%B8%80/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -446,12 +555,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
