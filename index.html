@@ -168,6 +168,563 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/26/%E6%AF%95%E8%AE%BE%E5%85%AD%E5%8D%81%E5%A4%A9%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92-%E5%8F%82%E8%80%83deepseek/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="超限爆闪">
+      <meta itemprop="description" content="天道酬勤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="日进一知">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/26/%E6%AF%95%E8%AE%BE%E5%85%AD%E5%8D%81%E5%A4%A9%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92-%E5%8F%82%E8%80%83deepseek/" class="post-title-link" itemprop="url">毕设六十天学习计划-参考deepseek</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-02-26 15:25:14" itemprop="dateCreated datePublished" datetime="2025-02-26T15:25:14+08:00">2025-02-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/26/%E6%AF%95%E8%AE%BE%E6%80%BB%E7%BB%93-%E5%8F%82%E8%80%83deepseek/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="超限爆闪">
+      <meta itemprop="description" content="天道酬勤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="日进一知">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/26/%E6%AF%95%E8%AE%BE%E6%80%BB%E7%BB%93-%E5%8F%82%E8%80%83deepseek/" class="post-title-link" itemprop="url">毕设总结-参考deepseek</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-26 15:23:14 / 修改时间：15:23:26" itemprop="dateCreated datePublished" datetime="2025-02-26T15:23:14+08:00">2025-02-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>以下是基于对话内容整理的<strong>系统开发文档框架</strong>和<strong>分阶段学习计划</strong>，适合用于个性化景区推荐系统的开发与学习。</p>
+<hr>
+<h2 id="一、系统开发文档框架"><a href="#一、系统开发文档框架" class="headerlink" title="一、系统开发文档框架"></a><strong>一、系统开发文档框架</strong></h2><h3 id="1-项目概述"><a href="#1-项目概述" class="headerlink" title="1. 项目概述"></a><strong>1. 项目概述</strong></h3><ul>
+<li><strong>目标</strong>：构建一个基于用户行为、时空数据和知识图谱的个性化景区推荐系统。</li>
+<li><strong>核心功能</strong>：<ul>
+<li>用户偏好建模（协同过滤、深度学习）</li>
+<li>时空场景感知（地理围栏、实时天气集成）</li>
+<li>可视化推荐结果（地图交互、SHAP值解释）</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-技术栈"><a href="#2-技术栈" class="headerlink" title="2. 技术栈"></a><strong>2. 技术栈</strong></h3><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>技术选型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>后端</td>
+<td>Python 3.12 + Django 4.2 + Django Channels + PostGIS</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>PostgreSQL + PostGIS（地理空间扩展）</td>
+</tr>
+<tr>
+<td>推荐算法</td>
+<td>Node2Vec（图嵌入） + FTRL（在线学习） + ST-GCN（时空建模）</td>
+</tr>
+<tr>
+<td>前端</td>
+<td>Vue.js 3 + Leaflet.js（地图可视化） + SHAP.js（模型解释）</td>
+</tr>
+<tr>
+<td>部署</td>
+<td>Docker + Nginx + AWS EC2</td>
+</tr>
+</tbody></table>
+<h3 id="3-功能模块设计"><a href="#3-功能模块设计" class="headerlink" title="3. 功能模块设计"></a><strong>3. 功能模块设计</strong></h3><h4 id="3-1-用户行为分析模块"><a href="#3-1-用户行为分析模块" class="headerlink" title="3.1 用户行为分析模块"></a><strong>3.1 用户行为分析模块</strong></h4><ul>
+<li><strong>数据收集</strong>：用户游览记录、评分、地理位置、时间戳。</li>
+<li><strong>算法实现</strong>：<ul>
+<li>基于图的Node2Vec用户-景点嵌入。</li>
+<li>FTRL实时更新用户偏好权重。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-2-时空场景建模模块"><a href="#3-2-时空场景建模模块" class="headerlink" title="3.2 时空场景建模模块"></a><strong>3.2 时空场景建模模块</strong></h4><ul>
+<li><strong>地理围栏</strong>：基于PostGIS的栅格查询（如“附近5公里内景点”）。</li>
+<li><strong>时空特征提取</strong>：<ul>
+<li>ST-GCN模型处理历史游览时空序列。</li>
+<li>LSTM预测未来时间段的用户兴趣。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-3-推荐引擎模块"><a href="#3-3-推荐引擎模块" class="headerlink" title="3.3 推荐引擎模块"></a><strong>3.3 推荐引擎模块</strong></h4><ul>
+<li><strong>混合推荐策略</strong>：<ul>
+<li>协同过滤（用户-景点相似性） × 知识图谱（景点关联关系） × 时空特征。</li>
+</ul>
+</li>
+<li><strong>实时接口</strong>：WebSocket推送动态推荐结果。</li>
+</ul>
+<h4 id="3-4-可视化与解释模块"><a href="#3-4-可视化与解释模块" class="headerlink" title="3.4 可视化与解释模块"></a><strong>3.4 可视化与解释模块</strong></h4><ul>
+<li><strong>前端交互</strong>：Leaflet地图展示推荐景点分布。</li>
+<li><strong>模型解释</strong>：SHAP值热力图可视化景点重要性。</li>
+</ul>
+<h3 id="4-数据库设计"><a href="#4-数据库设计" class="headerlink" title="4. 数据库设计"></a><strong>4. 数据库设计</strong></h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 示例：用户行为表（包含时空字段）</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> user_behavior (</span><br><span class="line">    id SERIAL <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    user_id <span class="type">INT</span> <span class="keyword">NOT NULL</span>,</span><br><span class="line">    location GEOMETRY(Point, <span class="number">4326</span>),</span><br><span class="line">    <span class="type">timestamp</span> TIMESTAMPTZ <span class="keyword">NOT NULL</span>,</span><br><span class="line">    rating <span class="type">INT</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>,</span><br><span class="line">    <span class="keyword">FOREIGN KEY</span> (user_id) <span class="keyword">REFERENCES</span> users(id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-API接口设计"><a href="#5-API接口设计" class="headerlink" title="5. API接口设计"></a><strong>5. API接口设计</strong></h3><table>
+<thead>
+<tr>
+<th>接口名称</th>
+<th>描述</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>用户行为记录</td>
+<td>提交用户游览数据</td>
+<td><code>/api/v1/behavior/</code></td>
+</tr>
+<tr>
+<td>实时推荐</td>
+<td>获取基于位置的推荐景点</td>
+<td><code>/api/v1/recommendation/</code></td>
+</tr>
+<tr>
+<td>模型解释</td>
+<td>返回SHAP值解释</td>
+<td><code>/api/v1/explanation/</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="二、分阶段学习计划"><a href="#二、分阶段学习计划" class="headerlink" title="二、分阶段学习计划"></a><strong>二、分阶段学习计划</strong></h2><h3 id="阶段一：基础技术栈搭建（4周）"><a href="#阶段一：基础技术栈搭建（4周）" class="headerlink" title="阶段一：基础技术栈搭建（4周）"></a><strong>阶段一：基础技术栈搭建（4周）</strong></h3><h4 id="目标：掌握开发环境配置与核心模块实现。"><a href="#目标：掌握开发环境配置与核心模块实现。" class="headerlink" title="目标：掌握开发环境配置与核心模块实现。"></a><strong>目标</strong>：掌握开发环境配置与核心模块实现。</h4><h4 id="任务："><a href="#任务：" class="headerlink" title="任务："></a><strong>任务</strong>：</h4><ol>
+<li><strong>Python&#x2F;Django基础</strong>：<ul>
+<li>完成<a target="_blank" rel="noopener" href="https://docs.djangoproject.com/en/4.2/">Django官方教程</a>的“Polls应用”。</li>
+<li>实现用户认证系统（Django REST Framework）。</li>
+</ul>
+</li>
+<li><strong>地理空间处理</strong>：<ul>
+<li>安装PostGIS，练习SQL空间查询（如缓冲区分析）。</li>
+<li>使用GDAL将Shapefile转换为PostGIS数据库。</li>
+</ul>
+</li>
+<li><strong>前端入门</strong>：<ul>
+<li>创建Vue.js项目，集成Leaflet地图展示基础地图。</li>
+</ul>
+</li>
+<li><strong>部署入门</strong>：<ul>
+<li>使用Docker Compose构建Django开发环境。</li>
+<li>在本地运行Docker容器。</li>
+</ul>
+</li>
+</ol>
+<h4 id="推荐资源："><a href="#推荐资源：" class="headerlink" title="推荐资源："></a><strong>推荐资源</strong>：</h4><ul>
+<li>书籍：《Django 3 By Example》（Anthony Shaw）</li>
+<li>视频：<a target="_blank" rel="noopener" href="https://channels.readthedocs.io/en/latest/tutorial/">Django Channels官方教程</a></li>
+</ul>
+<hr>
+<h3 id="阶段二：推荐算法实现（6周）"><a href="#阶段二：推荐算法实现（6周）" class="headerlink" title="阶段二：推荐算法实现（6周）"></a><strong>阶段二：推荐算法实现（6周）</strong></h3><h4 id="目标：完成核心推荐算法开发与集成。"><a href="#目标：完成核心推荐算法开发与集成。" class="headerlink" title="目标：完成核心推荐算法开发与集成。"></a><strong>目标</strong>：完成核心推荐算法开发与集成。</h4><h4 id="任务：-1"><a href="#任务：-1" class="headerlink" title="任务："></a><strong>任务</strong>：</h4><ol>
+<li><strong>协同过滤</strong>：<ul>
+<li>使用Surprise库实现基于用户的协同过滤。</li>
+<li>对比MF算法与深度学习的性能差异。</li>
+</ul>
+</li>
+<li><strong>图嵌入与知识图谱</strong>：<ul>
+<li>实现Node2Vec算法（参考<a target="_blank" rel="noopener" href="https://github.com/eliasahab/node2vec">GitHub代码</a>）。</li>
+<li>在Neo4j中构建景点关联图谱（如“景点A→周边景点B”）。</li>
+</ul>
+</li>
+<li><strong>时空建模</strong>：<ul>
+<li>复现ST-GCN论文中的时空特征提取流程。</li>
+<li>使用LSTM预测用户未来兴趣点。</li>
+</ul>
+</li>
+<li><strong>在线学习集成</strong>：<ul>
+<li>部署FTRL算法实现实时偏好更新。</li>
+</ul>
+</li>
+</ol>
+<h4 id="推荐资源：-1"><a href="#推荐资源：-1" class="headerlink" title="推荐资源："></a><strong>推荐资源</strong>：</h4><ul>
+<li>课程：<a target="_blank" rel="noopener" href="https://www.coursera.org/specializations/recommender-systems">Coursera - Recommender Systems专项课</a></li>
+<li>工具书：《推荐系统实战》（项亮）</li>
+</ul>
+<hr>
+<h3 id="阶段三：系统集成与优化（4周）"><a href="#阶段三：系统集成与优化（4周）" class="headerlink" title="阶段三：系统集成与优化（4周）"></a><strong>阶段三：系统集成与优化（4周）</strong></h3><h4 id="目标：将各模块整合为完整系统并进行性能调优。"><a href="#目标：将各模块整合为完整系统并进行性能调优。" class="headerlink" title="目标：将各模块整合为完整系统并进行性能调优。"></a><strong>目标</strong>：将各模块整合为完整系统并进行性能调优。</h4><h4 id="任务：-2"><a href="#任务：-2" class="headerlink" title="任务："></a><strong>任务</strong>：</h4><ol>
+<li><strong>全栈集成</strong>：<ul>
+<li>使用Django Channels实现WebSocket实时推荐。</li>
+<li>前端调用API获取推荐结果并渲染地图。</li>
+</ul>
+</li>
+<li><strong>性能优化</strong>：<ul>
+<li>部署PostGIS索引加速空间查询。</li>
+<li>使用Redis缓存高频访问的推荐结果。</li>
+</ul>
+</li>
+<li><strong>模型解释</strong>：<ul>
+<li>集成SHAP库生成推荐解释可视化界面。</li>
+</ul>
+</li>
+<li><strong>压力测试</strong>：<ul>
+<li>使用Locust模拟高并发请求，优化Docker部署配置。</li>
+</ul>
+</li>
+</ol>
+<h4 id="推荐资源：-2"><a href="#推荐资源：-2" class="headerlink" title="推荐资源："></a><strong>推荐资源</strong>：</h4><ul>
+<li>文档：<a target="_blank" rel="noopener" href="https://channels.readthedocs.io/en/latest/">Django Channels实战指南</a></li>
+<li>工具：<a target="_blank" rel="noopener" href="https://locust.io/">Locust压力测试框架</a></li>
+</ul>
+<hr>
+<h3 id="阶段四：论文写作与答辩（2周）"><a href="#阶段四：论文写作与答辩（2周）" class="headerlink" title="阶段四：论文写作与答辩（2周）"></a><strong>阶段四：论文写作与答辩（2周）</strong></h3><h4 id="目标：完成系统设计与学术成果输出。"><a href="#目标：完成系统设计与学术成果输出。" class="headerlink" title="目标：完成系统设计与学术成果输出。"></a><strong>目标</strong>：完成系统设计与学术成果输出。</h4><h4 id="任务：-3"><a href="#任务：-3" class="headerlink" title="任务："></a><strong>任务</strong>：</h4><ol>
+<li><strong>文档撰写</strong>：<ul>
+<li>按照<a target="_blank" rel="noopener" href="https://github.com/akueisara/SDA-Sample-System-Design-Paper">SDA模板</a>编写系统设计说明书。</li>
+<li>论文结构示例：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">摘要 → 引言 → 相关工作 → 系统设计 → 实验与结果 → 结论</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><strong>成果展示</strong>：<ul>
+<li>制作PPT，重点演示时空建模效果与实时推荐交互。</li>
+<li>准备技术答辩（突出技术选型与创新点）。</li>
+</ul>
+</li>
+</ol>
+<h4 id="推荐资源：-3"><a href="#推荐资源：-3" class="headerlink" title="推荐资源："></a><strong>推荐资源</strong>：</h4><ul>
+<li>模板：<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~quake/thesis.html">How to Write a Good CS Thesis</a></li>
+<li>工具：<a target="_blank" rel="noopener" href="https://draw.io/">Draw.io</a>（架构图绘制）</li>
+</ul>
+<hr>
+<h2 id="三、配套学习资源列表"><a href="#三、配套学习资源列表" class="headerlink" title="三、配套学习资源列表"></a><strong>三、配套学习资源列表</strong></h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>资源链接</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>代码仓库</strong></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/your-username/recommendation-system">GitHub - 个性化推荐系统模板</a>（需自行填充）</td>
+</tr>
+<tr>
+<td><strong>在线实验</strong></td>
+<td><a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/MyDrive/st-gcn_example.ipynb">Google Colab - ST-GCN复现环境</a></td>
+</tr>
+<tr>
+<td><strong>社区支持</strong></td>
+<td><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/tagged/django">Django Stack Overflow标签</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、注意事项"><a href="#四、注意事项" class="headerlink" title="四、注意事项"></a><strong>四、注意事项</strong></h2><ol>
+<li><strong>版本控制</strong>：使用Git分支管理功能开发（如<code>feature/algorithm</code>分支）。</li>
+<li><strong>文档记录</strong>：在代码中添加Swagger API文档，使用Sphinx生成技术文档。</li>
+<li><strong>伦理合规</strong>：遵循GDPR规范处理用户地理位置数据。</li>
+</ol>
+<p>通过以上计划，可在约16周内完成从零到一的个性化景区推荐系统开发与学习闭环。建议每周预留20-30小时投入开发与调试。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/26/%E6%AF%95%E8%AE%BE%E6%8A%80%E6%9C%AF%E8%B5%84%E6%BA%90-%E5%8F%82%E8%80%83deepseek/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="超限爆闪">
+      <meta itemprop="description" content="天道酬勤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="日进一知">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/26/%E6%AF%95%E8%AE%BE%E6%8A%80%E6%9C%AF%E8%B5%84%E6%BA%90-%E5%8F%82%E8%80%83deepseek/" class="post-title-link" itemprop="url">毕设技术资源-参考deepseek</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-02-26 15:19:35" itemprop="dateCreated datePublished" datetime="2025-02-26T15:19:35+08:00">2025-02-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/26/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E5%BC%80%E5%8F%91%E8%AF%B4%E6%98%8E%E4%B9%A6-%E5%8F%82%E8%80%83deepseek/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="超限爆闪">
+      <meta itemprop="description" content="天道酬勤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="日进一知">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/26/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E5%BC%80%E5%8F%91%E8%AF%B4%E6%98%8E%E4%B9%A6-%E5%8F%82%E8%80%83deepseek/" class="post-title-link" itemprop="url">系统设计开发说明书-参考deepseek</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-02-26 15:17:57" itemprop="dateCreated datePublished" datetime="2025-02-26T15:17:57+08:00">2025-02-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/26/%E6%AF%95%E8%AE%BE%E5%88%86%E6%9E%902-%E5%8F%82%E8%80%83deepseek/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="超限爆闪">
+      <meta itemprop="description" content="天道酬勤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="日进一知">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/26/%E6%AF%95%E8%AE%BE%E5%88%86%E6%9E%902-%E5%8F%82%E8%80%83deepseek/" class="post-title-link" itemprop="url">毕设分析2-参考deepseek</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-02-26 15:14:02" itemprop="dateCreated datePublished" datetime="2025-02-26T15:14:02+08:00">2025-02-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/26/%E6%AF%95%E8%AE%BE%E5%88%86%E6%9E%90-%E5%8F%82%E8%80%83deepseek/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="超限爆闪">
+      <meta itemprop="description" content="天道酬勤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="日进一知">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/26/%E6%AF%95%E8%AE%BE%E5%88%86%E6%9E%90-%E5%8F%82%E8%80%83deepseek/" class="post-title-link" itemprop="url">毕设分析-参考deepseek</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-02-26 15:12:24" itemprop="dateCreated datePublished" datetime="2025-02-26T15:12:24+08:00">2025-02-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/23/%E5%8F%82%E8%80%83%E8%AE%BA%E6%96%87%E4%BA%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -883,7 +1440,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
