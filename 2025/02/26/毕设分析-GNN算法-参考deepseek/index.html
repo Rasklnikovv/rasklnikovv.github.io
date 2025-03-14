@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rasklnikovv.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="以下是 基于图神经网络（GNN）的个性化景区推荐系统 的详细实现步骤，包含技术原理、代码示例和关键细节说明：  一、GNN推荐的核心思想1. 为什么选择GNN？ 数据关系复杂：景区推荐需要处理用户-景点-属性（如类型、评分）、用户-景点-时间（访问时段）、用户-用户（社交关系）等多维度关联 动态交互捕获：传统协同过滤难以建模时空连续性和多跳关系（例如”用户A喜欢景点X→景点X属于自然风光→用户A可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="毕设分析-GNN算法-参考deepseek">
+<meta property="og:url" content="https://rasklnikovv.github.io/2025/02/26/%E6%AF%95%E8%AE%BE%E5%88%86%E6%9E%90-GNN%E7%AE%97%E6%B3%95-%E5%8F%82%E8%80%83deepseek/index.html">
+<meta property="og:site_name" content="日进一知">
+<meta property="og:description" content="以下是 基于图神经网络（GNN）的个性化景区推荐系统 的详细实现步骤，包含技术原理、代码示例和关键细节说明：  一、GNN推荐的核心思想1. 为什么选择GNN？ 数据关系复杂：景区推荐需要处理用户-景点-属性（如类型、评分）、用户-景点-时间（访问时段）、用户-用户（社交关系）等多维度关联 动态交互捕获：传统协同过滤难以建模时空连续性和多跳关系（例如”用户A喜欢景点X→景点X属于自然风光→用户A可">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-26T07:52:01.000Z">
+<meta property="article:modified_time" content="2025-02-26T08:05:09.523Z">
+<meta property="article:author" content="超限爆闪">
+<meta property="article:tag" content="有志者，事竟成">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://rasklnikovv.github.io/2025/02/26/%E6%AF%95%E8%AE%BE%E5%88%86%E6%9E%90-GNN%E7%AE%97%E6%B3%95-%E5%8F%82%E8%80%83deepseek/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>毕设分析-GNN算法-参考deepseek | 日进一知</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">日进一知</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rasklnikovv.github.io/2025/02/26/%E6%AF%95%E8%AE%BE%E5%88%86%E6%9E%90-GNN%E7%AE%97%E6%B3%95-%E5%8F%82%E8%80%83deepseek/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="超限爆闪">
+      <meta itemprop="description" content="天道酬勤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="日进一知">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          毕设分析-GNN算法-参考deepseek
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-26 15:52:01 / 修改时间：16:05:09" itemprop="dateCreated datePublished" datetime="2025-02-26T15:52:01+08:00">2025-02-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>以下是 <strong>基于图神经网络（GNN）的个性化景区推荐系统</strong> 的详细实现步骤，包含技术原理、代码示例和关键细节说明：</p>
+<hr>
+<h3 id="一、GNN推荐的核心思想"><a href="#一、GNN推荐的核心思想" class="headerlink" title="一、GNN推荐的核心思想"></a><strong>一、GNN推荐的核心思想</strong></h3><h4 id="1-为什么选择GNN？"><a href="#1-为什么选择GNN？" class="headerlink" title="1. 为什么选择GNN？"></a>1. 为什么选择GNN？</h4><ul>
+<li><strong>数据关系复杂</strong>：景区推荐需要处理用户-景点-属性（如类型、评分）、用户-景点-时间（访问时段）、用户-用户（社交关系）等多维度关联</li>
+<li><strong>动态交互捕获</strong>：传统协同过滤难以建模时空连续性和多跳关系（例如”用户A喜欢景点X→景点X属于自然风光→用户A可能也喜欢自然风光类景点”）</li>
+<li><strong>实时性支持</strong>：通过图的增量更新机制快速响应用户行为变化</li>
+</ul>
+<h4 id="2-GNN在推荐中的典型应用场景"><a href="#2-GNN在推荐中的典型应用场景" class="headerlink" title="2. GNN在推荐中的典型应用场景"></a>2. GNN在推荐中的典型应用场景</h4><ul>
+<li>用户兴趣传播（社交图谱）</li>
+<li>景点属性关联挖掘（语义图谱）</li>
+<li>时空行为建模（移动轨迹预测）</li>
+</ul>
+<hr>
+<h3 id="二、数据构建与预处理"><a href="#二、数据构建与预处理" class="headerlink" title="二、数据构建与预处理"></a><strong>二、数据构建与预处理</strong></h3><h4 id="1-数据类型及处理方式"><a href="#1-数据类型及处理方式" class="headerlink" title="1. 数据类型及处理方式"></a>1. 数据类型及处理方式</h4><table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>示例数据</th>
+<th>处理方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>用户行为</td>
+<td>(用户ID, 景点ID, 时间戳, 行为类型)</td>
+<td>会话化分群、时间窗口划分</td>
+</tr>
+<tr>
+<td>景点属性</td>
+<td>景点ID, 类型, 评分, 描述</td>
+<td>TF-IDF文本向量化、图像特征提取</td>
+</tr>
+<tr>
+<td>用户画像</td>
+<td>年龄, 性别, 地区, 兴趣标签</td>
+<td>离散化编码、嵌入表示</td>
+</tr>
+</tbody></table>
+<h4 id="2-图构建方法"><a href="#2-图构建方法" class="headerlink" title="2. 图构建方法"></a>2. 图构建方法</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用DGL构建异构图（用户-景点-属性）</span></span><br><span class="line"><span class="keyword">import</span> dgl</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建节点映射</span></span><br><span class="line">user_nodes = &#123;&#125;</span><br><span class="line">spot_nodes = &#123;&#125;</span><br><span class="line">attr_nodes = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加用户节点</span></span><br><span class="line"><span class="keyword">for</span> user_id <span class="keyword">in</span> users:</span><br><span class="line">    user_nodes[user_id] = <span class="built_in">len</span>(user_nodes)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 添加景点节点</span></span><br><span class="line"><span class="keyword">for</span> spot_id <span class="keyword">in</span> spots:</span><br><span class="line">    spot_nodes[spot_id] = <span class="built_in">len</span>(user_nodes) + <span class="built_in">len</span>(spot_nodes)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加属性节点（如类型、季节）</span></span><br><span class="line"><span class="keyword">for</span> attr_type, attr_value <span class="keyword">in</span> spot_attrs:</span><br><span class="line">    attr_nodes[(attr_type, attr_value)] = <span class="built_in">len</span>(user_nodes) + <span class="built_in">len</span>(spot_nodes) + <span class="built_in">len</span>(attr_nodes)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建边</span></span><br><span class="line">g = dgl.heterograph()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户-景点关系（双向边）</span></span><br><span class="line"><span class="keyword">for</span> user_id, spot_id <span class="keyword">in</span> user_spot_interactions:</span><br><span class="line">    u = user_nodes[user_id]</span><br><span class="line">    s = spot_nodes[spot_id]</span><br><span class="line">    g.add_edges(u, <span class="string">&#x27;user&#x27;</span>, s, <span class="string">&#x27;spot&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 景点-属性关系（单向边）</span></span><br><span class="line"><span class="keyword">for</span> spot_id, (attr_type, attr_value) <span class="keyword">in</span> spot_attrs.items():</span><br><span class="line">    s = spot_nodes[spot_id]</span><br><span class="line">    a = attr_nodes[(attr_type, attr_value)]</span><br><span class="line">    g.add_edges(s, <span class="string">&#x27;spot&#x27;</span>, a, <span class="string">&#x27;attr&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户-用户相似关系（社交图）</span></span><br><span class="line"><span class="keyword">for</span> u1, u2 <span class="keyword">in</span> user_similarities:</span><br><span class="line">    g.add_edges(u1, <span class="string">&#x27;user&#x27;</span>, u2, <span class="string">&#x27;user_similar&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="三、GNN模型实现"><a href="#三、GNN模型实现" class="headerlink" title="三、GNN模型实现"></a><strong>三、GNN模型实现</strong></h3><h4 id="1-时空注意力图卷积网络（STGCN）"><a href="#1-时空注意力图卷积网络（STGCN）" class="headerlink" title="1. 时空注意力图卷积网络（STGCN）"></a>1. 时空注意力图卷积网络（STGCN）</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> dgl.nn <span class="keyword">as</span> dglnn</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">STGCN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_nodes, hidden_size=<span class="number">128</span>, num_layers=<span class="number">2</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.num_layers = num_layers</span><br><span class="line">        <span class="variable language_">self</span>.hidden_size = hidden_size</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 时空图卷积层</span></span><br><span class="line">        <span class="variable language_">self</span>.gcn_layers = []</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(num_layers):</span><br><span class="line">            <span class="variable language_">self</span>.gcn_layers.append(dglnn.GCNConv(hidden_size, hidden_size))</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 时空注意力机制</span></span><br><span class="line">        <span class="variable language_">self</span>.spatial_att = nn.MultiheadAttention(embed_dim=hidden_size)</span><br><span class="line">        <span class="variable language_">self</span>.temporal_att = nn.Linear(hidden_size, hidden_size)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 位置编码（用于时间建模）</span></span><br><span class="line">        <span class="variable language_">self</span>.position_embedding = nn.Embedding(max_time_steps, hidden_size)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, g, node_features, time_masks</span>):</span><br><span class="line">        <span class="comment"># 初始化隐藏状态</span></span><br><span class="line">        h = node_features</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="variable language_">self</span>.num_layers):</span><br><span class="line">            <span class="comment"># 图卷积层</span></span><br><span class="line">            h = <span class="variable language_">self</span>.gcn_layers[_](g, h)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 时空特征融合</span></span><br><span class="line">            <span class="comment"># 1. 空间注意力</span></span><br><span class="line">            h_space = <span class="variable language_">self</span>.spatial_att(h, h)[<span class="number">0</span>]</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 2. 时间嵌入</span></span><br><span class="line">            t_embedding = <span class="variable language_">self</span>.position_embedding(time_masks)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 3. 时间注意力</span></span><br><span class="line">            h_temp = <span class="variable language_">self</span>.temporal_att(h + t_embedding)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 残差连接</span></span><br><span class="line">            h = h_space + h_temp</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> h</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-模型训练关键代码"><a href="#2-模型训练关键代码" class="headerlink" title="2. 模型训练关键代码"></a>2. 模型训练关键代码</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> dgl.dataloading <span class="keyword">import</span> EdgeDataLoader</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train_stgnn</span>(<span class="params">model, graph, features, labels, time_masks, epochs=<span class="number">100</span></span>):</span><br><span class="line">    <span class="comment"># 分布式数据加载</span></span><br><span class="line">    dataloader = EdgeDataLoader(graph, batch_size=<span class="number">256</span>, shuffle=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 损失函数</span></span><br><span class="line">    criterion = nn.MSELoss()</span><br><span class="line">    optimizer = optim.AdamW(model.parameters(), lr=<span class="number">1e-3</span>, weight_decay=<span class="number">1e-5</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">        total_loss = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> (g, nodes, time_masks), (preds) <span class="keyword">in</span> <span class="built_in">zip</span>(dataloader, <span class="built_in">zip</span>(features, time_masks)):</span><br><span class="line">            <span class="comment"># 前向传播</span></span><br><span class="line">            outputs = model(g, preds, time_masks)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 计算损失</span></span><br><span class="line">            loss = criterion(outputs, labels)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 反向传播</span></span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            loss.backward()</span><br><span class="line">            optimizer.step()</span><br><span class="line">            </span><br><span class="line">            total_loss += loss.item()</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;Epoch <span class="subst">&#123;epoch+<span class="number">1</span>&#125;</span>/<span class="subst">&#123;epochs&#125;</span>, Loss: <span class="subst">&#123;total_loss/<span class="built_in">len</span>(dataloader):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="四、在Django系统中的集成"><a href="#四、在Django系统中的集成" class="headerlink" title="四、在Django系统中的集成"></a><strong>四、在Django系统中的集成</strong></h3><h4 id="1-推荐服务接口设计"><a href="#1-推荐服务接口设计" class="headerlink" title="1. 推荐服务接口设计"></a>1. 推荐服务接口设计</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Django视图函数示例</span></span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> recommenders <span class="keyword">import</span> STGCNRecommender</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RecommendView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self, request</span>):</span><br><span class="line">        user_id = request.user.<span class="built_in">id</span></span><br><span class="line">        <span class="comment"># 获取用户时空行为序列</span></span><br><span class="line">        time_masks = get_user_time_masks(user_id)</span><br><span class="line">        <span class="comment"># 获取节点特征</span></span><br><span class="line">        node_features = get_node_embeddings(user_id)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 推荐计算</span></span><br><span class="line">        recommender = STGCNRecommender.load_from_cache()</span><br><span class="line">        recommendations = recommender.predict(user_id, time_masks, node_features)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> Response(recommendations[:<span class="number">10</span>])</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-实时行为更新机制"><a href="#2-实时行为更新机制" class="headerlink" title="2. 实时行为更新机制"></a>2. 实时行为更新机制</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用Django信号实时触发模型更新</span></span><br><span class="line"><span class="keyword">from</span> django.db.models.signals <span class="keyword">import</span> post_save</span><br><span class="line"><span class="keyword">from</span> django.dispatch <span class="keyword">import</span> receiver</span><br><span class="line"><span class="keyword">from</span> recommenders <span class="keyword">import</span> RealTimeUpdater</span><br><span class="line"></span><br><span class="line"><span class="meta">@receiver(<span class="params">post_save, sender=<span class="string">&#x27;users.UserBehavior&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">update_recommendation</span>(<span class="params">sender, instance, created, **kwargs</span>):</span><br><span class="line">    <span class="keyword">if</span> created:</span><br><span class="line">        RealTimeUpdater.update_user_vector(instance.user_id)</span><br><span class="line">        </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RealTimeUpdater</span>:</span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update_user_vector</span>(<span class="params">user_id</span>):</span><br><span class="line">        <span class="comment"># 1. 收集用户最新行为</span></span><br><span class="line">        behaviors = UserBehavior.objects.<span class="built_in">filter</span>(user_id=user_id).order_by(<span class="string">&#x27;-timestamp&#x27;</span>)[:<span class="number">50</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 2. 生成时间掩码</span></span><br><span class="line">        time_masks = generate_time_masks(behaviors)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 3. 调用GNN模型增量训练</span></span><br><span class="line">        STGCNRecommender.train_incrementally(user_id, time_masks)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="五、关键优化技巧"><a href="#五、关键优化技巧" class="headerlink" title="五、关键优化技巧"></a><strong>五、关键优化技巧</strong></h3><h4 id="1-实时增量学习"><a href="#1-实时增量学习" class="headerlink" title="1. 实时增量学习"></a>1. 实时增量学习</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 动态调整训练数据</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train_incrementally</span>(<span class="params">user_id, new_data</span>):</span><br><span class="line">    <span class="comment"># 加载预训练模型</span></span><br><span class="line">    model = STGCNRecommender.load_pretrained(user_id)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 创建新数据集</span></span><br><span class="line">    dataset = CustomDataset(new_data)</span><br><span class="line">    dataloader = DataLoader(dataset, batch_size=<span class="number">64</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 微调模型</span></span><br><span class="line">    optimizer = optim.SGD(model.parameters(), lr=<span class="number">1e-4</span>)</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        <span class="keyword">for</span> data, labels <span class="keyword">in</span> dataloader:</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            outputs = model(data)</span><br><span class="line">            loss = criterion(outputs, labels)</span><br><span class="line">            loss.backward()</span><br><span class="line">            optimizer.step()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存更新后的模型</span></span><br><span class="line">    model.save(user_id)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-冷启动解决方案"><a href="#2-冷启动解决方案" class="headerlink" title="2. 冷启动解决方案"></a>2. 冷启动解决方案</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基于内容的推荐备选方案</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">content_based_recommendation</span>(<span class="params">user_id</span>):</span><br><span class="line">    <span class="comment"># 获取用户兴趣标签</span></span><br><span class="line">    interests = get_user_interests(user_id)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算景点属性相似度</span></span><br><span class="line">    similar_spots = calculate_similarity(interests, all_spots)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sorted</span>(similar_spots, key=<span class="keyword">lambda</span> x: x[<span class="string">&#x27;similarity&#x27;</span>], reverse=<span class="literal">True</span>)[:<span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="六、评估与部署"><a href="#六、评估与部署" class="headerlink" title="六、评估与部署"></a><strong>六、评估与部署</strong></h3><h4 id="1-推荐效果评估指标"><a href="#1-推荐效果评估指标" class="headerlink" title="1. 推荐效果评估指标"></a>1. 推荐效果评估指标</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> precision_score, recall_score, f1_score</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">evaluate</span>(<span class="params">recommendations, test_labels</span>):</span><br><span class="line">    <span class="comment"># 计算Top-10准确率</span></span><br><span class="line">    hit_rate = <span class="built_in">sum</span>(<span class="number">1</span> <span class="keyword">for</span> i <span class="keyword">in</span> test_labels[:<span class="number">10</span>] <span class="keyword">if</span> i <span class="keyword">in</span> recommendations) / <span class="number">10</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算F1值</span></span><br><span class="line">    y_true = test_labels</span><br><span class="line">    y_pred = [<span class="number">1</span> <span class="keyword">if</span> x <span class="keyword">in</span> recommendations <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> y_true]</span><br><span class="line">    f1 = f1_score(y_true, y_pred, pos_label=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&#x27;hit_rate&#x27;</span>: <span class="string">f&quot;<span class="subst">&#123;hit_rate:<span class="number">.2</span>%&#125;</span>&quot;</span>,</span><br><span class="line">        <span class="string">&#x27;f1_score&#x27;</span>: <span class="string">f&quot;<span class="subst">&#123;f1:<span class="number">.4</span>f&#125;</span>&quot;</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-系统部署架构"><a href="#2-系统部署架构" class="headerlink" title="2. 系统部署架构"></a>2. 系统部署架构</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Kubernetes部署配置示例</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">recommendation-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">gnn-recommender</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">gcr.io/my-project/stgnn:latest</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8000</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">DJANGO_SECRET_KEY=...</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">GRAPH_DB_URI=neo4j://localhost:7687</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="七、实际开发建议"><a href="#七、实际开发建议" class="headerlink" title="七、实际开发建议"></a><strong>七、实际开发建议</strong></h3><ol>
+<li><strong>快速验证原型</strong>：使用DGL提供的<a target="_blank" rel="noopener" href="https://grouplens.org/datasets/movielens/">MovieLens</a>数据集进行算法验证</li>
+<li><strong>可视化工具</strong>：使用<a target="_blank" rel="noopener" href="https://www.neo4j.com/bloom/">Neo4j Bloom</a>直观查看图结构</li>
+<li><strong>性能调优</strong>：采用<a target="_blank" rel="noopener" href="https://dask.org/">Dask</a>进行分布式训练，利用GPU加速（需NVIDIA显卡）</li>
+<li><strong>安全防护</strong>：对用户ID和景点ID进行脱敏处理，防止图遍历攻击</li>
+</ol>
+<p>如果需要某个模块的具体代码实现（如Neo4j图构建、Django Channels实时推送），可以告诉我具体需求，我会提供针对性更强的代码示例！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/02/26/%E6%AF%95%E8%AE%BE%E5%88%86%E6%9E%902nd-%E5%8F%82%E8%80%83deepseek/" rel="prev" title="毕设分析2nd-参考deepseek">
+      <i class="fa fa-chevron-left"></i> 毕设分析2nd-参考deepseek
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/02/26/%E6%AF%95%E8%AE%BE-%E5%AD%A6%E4%B9%A0%E8%A7%84%E5%88%92-%E5%8F%82%E8%80%83deepseek/" rel="next" title="毕设-学习规划-参考deepseek">
+      毕设-学习规划-参考deepseek <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81GNN%E6%8E%A8%E8%8D%90%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="nav-number">1.</span> <span class="nav-text">一、GNN推荐的核心思想</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9GNN%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">1. 为什么选择GNN？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-GNN%E5%9C%A8%E6%8E%A8%E8%8D%90%E4%B8%AD%E7%9A%84%E5%85%B8%E5%9E%8B%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.2.</span> <span class="nav-text">2. GNN在推荐中的典型应用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%95%B0%E6%8D%AE%E6%9E%84%E5%BB%BA%E4%B8%8E%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">二、数据构建与预处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%A4%84%E7%90%86%E6%96%B9%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">1. 数据类型及处理方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%9B%BE%E6%9E%84%E5%BB%BA%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">2. 图构建方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81GNN%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">三、GNN模型实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%97%B6%E7%A9%BA%E6%B3%A8%E6%84%8F%E5%8A%9B%E5%9B%BE%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C%EF%BC%88STGCN%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">1. 时空注意力图卷积网络（STGCN）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">2. 模型训练关键代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%9C%A8Django%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84%E9%9B%86%E6%88%90"><span class="nav-number">4.</span> <span class="nav-text">四、在Django系统中的集成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%8E%A8%E8%8D%90%E6%9C%8D%E5%8A%A1%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.1.</span> <span class="nav-text">1. 推荐服务接口设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%AE%9E%E6%97%B6%E8%A1%8C%E4%B8%BA%E6%9B%B4%E6%96%B0%E6%9C%BA%E5%88%B6"><span class="nav-number">4.2.</span> <span class="nav-text">2. 实时行为更新机制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%85%B3%E9%94%AE%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7"><span class="nav-number">5.</span> <span class="nav-text">五、关键优化技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%AD%A6%E4%B9%A0"><span class="nav-number">5.1.</span> <span class="nav-text">1. 实时增量学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%86%B7%E5%90%AF%E5%8A%A8%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">5.2.</span> <span class="nav-text">2. 冷启动解决方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E8%AF%84%E4%BC%B0%E4%B8%8E%E9%83%A8%E7%BD%B2"><span class="nav-number">6.</span> <span class="nav-text">六、评估与部署</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%8E%A8%E8%8D%90%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="nav-number">6.1.</span> <span class="nav-text">1. 推荐效果评估指标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2%E6%9E%B6%E6%9E%84"><span class="nav-number">6.2.</span> <span class="nav-text">2. 系统部署架构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E5%AE%9E%E9%99%85%E5%BC%80%E5%8F%91%E5%BB%BA%E8%AE%AE"><span class="nav-number">7.</span> <span class="nav-text">七、实际开发建议</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="超限爆闪"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">超限爆闪</p>
+  <div class="site-description" itemprop="description">天道酬勤</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2025-02 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">超限爆闪</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
